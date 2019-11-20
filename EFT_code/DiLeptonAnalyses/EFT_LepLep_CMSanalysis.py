@@ -10,6 +10,7 @@ parser.add_argument('--XS', help='Sample cross section')
 parser.add_argument('--MLL', help='Minimum mll')
 parser.add_argument('--OUT', help='ROOT output file')
 parser.add_argument('--ANA', help='Analysis selector')
+parser.add_argument('--DELPHES', help='Delphes libraries location')
 args = parser.parse_args()
 
 def DeltaPhi(phi1,phi2):
@@ -23,9 +24,10 @@ def DeltaPhi(phi1,phi2):
 def MT(Lpt,MET,Lphi,METphi):
     return sqrt(2*Lpt*MET*(1-cos(DeltaPhi(METphi,Lphi))))
 
-Delphes_Path="/cms/Jose/EFT_MG_PRL_version/MG5_aMC_v2_6_1/Delphes/"
+#Delphes_Path="/cms/Jose/EFT_MG_PRL_version/MG5_aMC_v2_6_1/Delphes/"
 #Delphes_Path="/home/joser/Dropbox/Vandy/EFT/ElectronNeutrino/Delphes-3.4.1/"
-ROOT.gSystem.AddDynamicPath(Delphes_Path)
+#ROOT.gSystem.AddDynamicPath(Delphes_Path)
+ROOT.gSystem.AddDynamicPath(args.DELPHES)
 #ROOT.gROOT.ProcessLine("#include <math.h>")
 ROOT.gSystem.Load("libDelphes");
 
@@ -85,6 +87,7 @@ if args.ANA=="Electron":
             if branchElectron.At(i).PT>35 and abs(branchElectron.At(i).Eta)<2.5:
                 if abs(branchElectron.At(i).Eta)<1.44 or abs(branchElectron.At(i).Eta)>1.57:
                     NE+=1
+        #print NE
         if NE != 2: continue
         Electron1 = ROOT.TLorentzVector(0,0,0,0)
         Electron1.SetPtEtaPhiM(branchElectron.At(0).PT,branchElectron.At(0).Eta,branchElectron.At(0).Phi,0.000511)
@@ -92,13 +95,14 @@ if args.ANA=="Electron":
         Electron2.SetPtEtaPhiM(branchElectron.At(1).PT,branchElectron.At(1).Eta,branchElectron.At(1).Phi,0.000511)
         DiElectron = Electron1 + Electron2
         EventMLL=DiElectron.M()
+        #print EventMLL
         if EventMLL>=MinValBin1 and EventMLL<MinValBin2:
             Val1Counter+=1
         if EventMLL>=MinValBin2 and EventMLL<MaxValBin2:
             Val2Counter+=1
-        if EventMLL>args.MLL:
+        if EventMLL>float(args.MLL):
             CountingEvents=CountingEvents+1
-            MLLhisto.Fill(EventMLL)
+            if args.OUT is not None: MLLhisto.Fill(EventMLL)
 
 if args.ANA=="Muon":
 
@@ -134,12 +138,9 @@ if args.ANA=="Muon":
             Val1Counter+=1
         if EventMLL>=MinValBin2 and EventMLL<MaxValBin2:
             Val2Counter+=1
-        if EventMLL>args.MLL:
+        if EventMLL>float(args.MLL):
             CountingEvents=CountingEvents+1
-            MLLhisto.Fill(EventMLL)
-        if EventMT>100.:
-            CountingEvents=CountingEvents+1
-            MThisto.Fill(EventMT)
+            if args.OUT is not None: MLLhisto.Fill(EventMLL)
             
 print "Number of events before full selection:", NumberOfEventsToCheck
 print "Number of events that passed full selection:", CountingEvents, "+-", sqrt(CountingEvents)
@@ -149,12 +150,14 @@ TotalXS=float(args.XS)
 Weight=(Lumi*TotalXS/NumberOfEventsToCheck)
 print "Used cross section", TotalXS, "pb"
 print "Weighted number of events that passed full selection:", CountingEvents*Weight, "+-", sqrt(CountingEvents)*Weight
+print "Bin content belong 600-900:", Val1Counter*Weight
+print "Bin content belong 900-1300:", Val2Counter*Weight
 if args.OUT is not None:
-    MThisto.Sumw2()
-    MThisto.Scale(Weight)
+    MLLhisto.Sumw2()
+    MLLhisto.Scale(Weight)
     print "Bin range,", "Value"
-    for i in xrange(MThisto.GetNbinsX()):
-        print str(MThisto.GetBinLowEdge(i+1))+"-"+str(MThisto.GetBinLowEdge(i+1)+MThisto.GetBinWidth(i+1))+",", MThisto.GetBinContent(i+1)
-    MThisto.Write()
+    for i in xrange(MLLhisto.GetNbinsX()):
+        print str(MLLhisto.GetBinLowEdge(i+1))+"-"+str(MLLhisto.GetBinLowEdge(i+1)+MLLhisto.GetBinWidth(i+1))+",", MLLhisto.GetBinContent(i+1)
+    MLLhisto.Write()
     RootFile.Close()
 
