@@ -1,0 +1,8 @@
+python EFT_LepLep_ATLASanalysis.py --DIR /home/jose/Pheno_studies/MG5_aMC_v2_6_4/DYToLL/Events/run_01/ --ANA Electron --XS 0.1226 --MLL 500 --DELPHES /home/jose/Pheno_studies/MG5_aMC_v2_6_4/Delphes/ --OUT EFT_EE0J_Validation_ATLAS.root > EFT_EE0J_Validation_ATLAS.txt
+
+python EFT_LepLep_ATLASanalysis.py --DIR /home/jose/Pheno_studies/MG5_aMC_v2_6_4/DYToLL1J/Events/run_02/ --ANA Electron --XS 0.07515 --MLL 500 --DELPHES /home/jose/Pheno_studies/MG5_aMC_v2_6_4/Delphes/ --OUT EFT_EE1J_Validation_ATLAS.root > EFT_EE1J_Validation_ATLAS.txt
+
+
+python EFT_LepLep_ATLASanalysis.py --DIR /home/jose/Pheno_studies/MG5_aMC_v2_6_4/DYToLL/Events/run_01/ --ANA Muon --XS 0.1226 --MLL 500 --DELPHES /home/jose/Pheno_studies/MG5_aMC_v2_6_4/Delphes/ --OUT EFT_MuMu0J_Validation_ATLAS.root > EFT_MuMu0J_Validation_ATLAS.txt
+
+python EFT_LepLep_ATLASanalysis.py --DIR /home/jose/Pheno_studies/MG5_aMC_v2_6_4/DYToLL1J/Events/run_02/ --ANA Muon --XS 0.07515 --MLL 500 --DELPHES /home/jose/Pheno_studies/MG5_aMC_v2_6_4/Delphes/ --OUT EFT_MuMu1J_Validation_ATLAS.root > EFT_MuMu1J_Validation_ATLAS.txt
