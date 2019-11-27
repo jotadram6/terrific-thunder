@@ -91,7 +91,7 @@ for entry in xrange(NumberOfEventsToCheck):
         if branchJet.At(i).PT>20:
             HT+=branchJet.At(i).PT
         #print "Jet:", i, "Tautagged:", branchTau.At(i).TauTag
-        if branchTau.At(i).TauTag and branchJet.At(i).PT>15:
+        if branchJet.At(i).TauTag and branchJet.At(i).PT>15:
             NTau+=1
     if NTau != 0: continue
     if branchElectron.GetEntries() > 0: continue
