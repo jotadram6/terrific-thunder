@@ -73,9 +73,9 @@ if args.ANA=="Electron":
     
     if args.OUT is not None:
         RootFile = ROOT.TFile(args.OUT,"recreate")
-        #BinArray=[130,138.93,148.473,158.672,169.572,181.22,193.668,206.972,221.189,236.383,252.621,269.974,288.519,308.338,329.518,352.154,376.344,402.195,429.823,459.349,490.902,524.623,560.661,599.174,640.332,684.318,731.325,781.561,835.248,892.623,953.939,1019.47,1089.5,1164.34,1244.32,1329.79,1421.14,1518.76,1623.09,1734.58,1853.73,1981.07,2117.15,2262.58,2418,2584.1,2761.61,2951.31,3154.04,3370.7,3602.24,3849.68,4114.12,4396.73,4698.75,5021.52,5366.46,5735.09,6129.05,6550.06,7000.]
-        #MThisto = ROOT.TH1F("MT","MT",len(BinArray)-1,array('d',BinArray))
-        MLLhisto = ROOT.TH1F("Mll","Mll",688,60,3500)
+        BinArray=[1370,1430,1490,1550,1610,1680,1750,1820,1890,1970,2050,2130,2210,2290,2370,2530,2760,4000]
+        MLLhisto = ROOT.TH1F("Mll","Mll",len(BinArray)-1,array('d',BinArray))
+        #MLLhisto = ROOT.TH1F("Mll","Mll",688,60,3500)
 
     for entry in xrange(NumberOfEventsToCheck):
         treeReader.ReadEntry(entry)
@@ -112,10 +112,9 @@ if args.ANA=="Muon":
     
     if args.OUT is not None:
         RootFile = ROOT.TFile(args.OUT,"recreate")
-        #BinArray=[1040.,1100.,1200.,1300.,1400.,1500.,1650.,1800.,1950.,2150.,2350.,2550.,4000.]
-        #MThisto = ROOT.TH1F("MT","MT",len(BinArray)-1,array('d',BinArray))
-        #MThisto = ROOT.TH1F("MT","MT",95,250,4000)
-        MLLhisto = ROOT.TH1F("Mll","Mll",670,150,3500)
+        BinArray=[1410,1530,1660,1790,1940,2100,2280,2480,2680,2900,3150,4000]
+        MLLhisto = ROOT.TH1F("Mll","Mll",len(BinArray)-1,array('d',BinArray))
+        #MLLhisto = ROOT.TH1F("Mll","Mll",670,150,3500)
         
     for entry in xrange(NumberOfEventsToCheck):
         treeReader.ReadEntry(entry)
