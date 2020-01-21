@@ -50,19 +50,68 @@ def DelphesInit(DelphesPath=args.DELPHES, DelphesTreeName="Delphes", SamplesDir=
 
     # Create object of class ExRootTreeReader
     treeReader = ROOT.ExRootTreeReader(DataChain)
-    numberOfEntries = treeReader.GetEntries()
 
-    if len(JetBranch)!=0: branchJet = treeReader.UseBranch(JetBranch)
-    if len(MetBranch)!=0: branchMET = treeReader.UseBranch(MetBranch)
-    if len(MuonBranch)!=0: branchMuon = treeReader.UseBranch(MuonBranch)
-    if len(ElectronBranch)!=0: branchElectron = treeReader.UseBranch(ElectronBranch)
+    BranchDictionary = {}
+    
+    if len(JetBranch)!=0:
+        branchJet = treeReader.UseBranch(JetBranch)
+        BranchDictionary["Jet"] = branchJet
+    if len(MetBranch)!=0:
+        branchMET = treeReader.UseBranch(MetBranch)
+        BranchDictionary["Met"] = branchMET
+    if len(MuonBranch)!=0:
+        branchMuon = treeReader.UseBranch(MuonBranch)
+        BranchDictionary["Muon"] = branchMuon
+    if len(ElectronBranch)!=0:
+        branchElectron = treeReader.UseBranch(ElectronBranch)
+        BranchDictionary["Electron"] = branchElectron
 
     NumberOfEventsToCheck=DataChain.GetEntries()
 
     print "--------------------------------------> ", NumberOfEventsToCheck, "events have been loaded and are ready for analysis!!!!!!!!!!!"
 
-    return NumberOfEventsToCheck
+    return NumberOfEventsToCheck, treeReader, BranchDictionary
 
-def LumiWeighter(Lumi=float(args.LUMI), xs=float(args.XS), TotalEvts,Evts):
+#ROOT file saver
+
+def BasketFile(FileName=args.OUT, OpenOption="recreate"):
+    try:
+        if args.OUT is None: raise NameError('No file name was declared, please do!')
+    except NameError:
+        raise
+    return ROOT.TFile(FileName, OpenOption)
+    
+
+#Lumi weighting function
+
+def LumiWeighter(Lumi=float(args.LUMI), xs=float(args.XS), TotalEvts, Evts):
     Weight=(Lumi*xs/TotalEvts)
-    return Evts*Weight, sqrt(Evts)*Weight
+    return Evts*Weight, sqrt(Evts)*Weight, Weight
+
+#Weight histogram
+
+def WeightHisto(Weight,Histo):
+    Histo.Sumw2()
+    Histo.Scale(Weight)
+    print "Bin range,", "Value"
+    for i in xrange(Histo.GetNbinsX()):
+        print str(Histo.GetBinLowEdge(i+1))+"-"+str(Histo.GetBinLowEdge(i+1)+Histo.GetBinWidth(i+1))+",", Histo.GetBinContent(i+1)
+
+#Shortcuts functions and variables
+
+MuonMass = 0.10566
+
+ElectronMass = 0.000511
+
+def Nl(ABranch): return ABranch.GetEntries()
+
+def PT(ABranch,index): return ABranch.At(index).PT
+
+def ETA(ABranch,index): return ABranch.At(index).Eta
+
+def PHI(ABranch,index): return ABranch.At(index).Phi
+
+def GetParticle(ABranch,index,mass):
+    Particle = ROOT.TLorentzVector(0,0,0,0)
+    Particle.SetPtEtaPhiM(PT(ABranch,index),ETA(ABranch,index),PHI(ABranch,index),mass)
+
