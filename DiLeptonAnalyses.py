@@ -34,7 +34,7 @@ if args.ANA=="ATLAS Electron":
             CountingEvents=CountingEvents+1
             MLLhisto.Fill(EventMLL)
         
-    W, E, DeltaE = LumiWeighter(TotalEvts=InitialEvts, CountingEvents)
+    E, DeltaE, W = LumiWeighter(InitialEvts, CountingEvents)
 
     print "Raw number of events before full selection:", InitialEvts
     print "Raw number of events that passed full selection:", CountingEvents, "+-", sqrt(CountingEvents)

@@ -84,7 +84,7 @@ def BasketFile(FileName=args.OUT, OpenOption="recreate"):
 
 #Lumi weighting function
 
-def LumiWeighter(Lumi=float(args.LUMI), xs=float(args.XS), TotalEvts, Evts):
+def LumiWeighter(TotalEvts, Evts, Lumi=float(args.LUMI), xs=float(args.XS)):
     Weight=(Lumi*xs/TotalEvts)
     return Evts*Weight, sqrt(Evts)*Weight, Weight
 
@@ -114,4 +114,5 @@ def PHI(ABranch,index): return ABranch.At(index).Phi
 def GetParticle(ABranch,index,mass):
     Particle = ROOT.TLorentzVector(0,0,0,0)
     Particle.SetPtEtaPhiM(PT(ABranch,index),ETA(ABranch,index),PHI(ABranch,index),mass)
+    return Particle
 
