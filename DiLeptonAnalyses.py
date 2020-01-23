@@ -71,3 +71,87 @@ if args.ANA=="ATLAS Muon":
 
 
     DisplayFinalInfo(InitialEvts, CountingEvents, Histo=MLLhisto, MyFile=RootFile)
+
+
+if args.ANA=="ATLAS Tau":
+
+    print "Not implemented yet"
+
+
+if args.ANA=="CMS Electron":
+
+    #Selection from PAS-EXO-09-019
+    #Electron selection: pT(e)> 35 GeV, |eta(e)|<1.44, 1.57<|eta(e)|<2.5
+
+    CountingEvents=0
+    
+    InitialEvts, TreeReader, Branches = DelphesInit(JetBranch="", MetBranch="", MuonBranch="", ElectronBranch="Electron")
+
+    RootFile = BasketFile()
+
+    BinArray=[600,900,1370,1430,1490,1550,1610,1680,1750,1820,1890,1970,2050,2130,2210,2290,2370,2530,2760,4000]
+    MLLhisto = ROOT.TH1F("Mll","Mll",len(BinArray)-1,array('d',BinArray))
+
+    for entry in xrange(InitialEvts):
+        TreeReader.ReadEntry(entry)
+        INE=Nl(Branches["Electron"])
+        if INE < 2: continue
+        NE=0
+        for i in xrange(INE):
+            if PT(Branches["Electron"],i)>35 and abs(ETA(Branches["Electron"],i))<2.5:
+                if abs(ETA(Branches["Electron"],i))<1.44 or abs(ETA(Branches["Electron"],i))>1.57:
+                    NE+=1
+
+        if NE != 2: continue
+        Electron1 = GetParticle(Branches["Electron"],0,ElectronMass)
+        Electron2 = GetParticle(Branches["Electron"],1,ElectronMass)
+        DiElectron = Electron1 + Electron2
+        EventMLL=DiElectron.M()
+        if EventMLL>float(args.MLL):
+            CountingEvents=CountingEvents+1
+            MLLhisto.Fill(EventMLL)
+
+
+    DisplayFinalInfo(InitialEvts, CountingEvents, Histo=MLLhisto, MyFile=RootFile)
+
+
+if args.ANA=="CMS Muon":
+
+    #Selection from PAS-EXO-09-019
+    #Muon selesction: pt(mu)>53, |eta(mu)|<2.4, Mmumu>150
+
+    CountingEvents=0
+    
+    InitialEvts, TreeReader, Branches = DelphesInit(JetBranch="", MetBranch="", MuonBranch="Muon", ElectronBranch="")
+
+    RootFile = BasketFile()
+
+    BinArray=[600,900,1410,1530,1660,1790,1940,2100,2280,2480,2680,2900,3150,4000]
+    MLLhisto = ROOT.TH1F("Mll","Mll",len(BinArray)-1,array('d',BinArray))
+
+    for entry in xrange(InitialEvts):
+        TreeReader.ReadEntry(entry)
+        INM=Nl(Branches["Muon"])
+        if INM < 2: continue
+        NE=0
+        for i in xrange(INM):
+            if PT(Branches["Muon"],i)>53 and abs(ETA(Branches["Muon"],i))<2.4:
+                NE+=1
+        if NE != 2: continue
+        Muon1 = GetParticle(Branches["Muon"],0,MuonMass)
+        Muon2 = GetParticle(Branches["Muon"],1,MuonMass)
+        DiMuon = Muon1 + Muon2
+        EventMLL=DiMuon.M()
+        if EventMLL<150: continue
+        elif EventMLL>float(args.MLL):
+            CountingEvents=CountingEvents+1
+            MLLhisto.Fill(EventMLL)
+
+
+    DisplayFinalInfo(InitialEvts, CountingEvents, Histo=MLLhisto, MyFile=RootFile)
+
+
+if args.ANA=="CMS Tau":
+
+    print "Not implemented yet"
+
