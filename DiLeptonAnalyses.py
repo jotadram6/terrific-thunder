@@ -16,7 +16,7 @@ if args.ANA=="ATLAS Electron":
 
     for entry in xrange(InitialEvts):
         TreeReader.ReadEntry(entry)
-        INE=Nl(Branches["Electron"])
+        INE=Np(Branches["Electron"])
         if INE < 2: continue
         NE=0
         for i in xrange(INE):
@@ -53,7 +53,7 @@ if args.ANA=="ATLAS Muon":
 
     for entry in xrange(InitialEvts):
         TreeReader.ReadEntry(entry)
-        INM=Nl(Branches["Muon"])
+        INM=Np(Branches["Muon"])
         if INM < 2: continue
         NE=0
         for i in xrange(INM):
@@ -94,7 +94,7 @@ if args.ANA=="CMS Electron":
 
     for entry in xrange(InitialEvts):
         TreeReader.ReadEntry(entry)
-        INE=Nl(Branches["Electron"])
+        INE=Np(Branches["Electron"])
         if INE < 2: continue
         NE=0
         for i in xrange(INE):
@@ -131,7 +131,7 @@ if args.ANA=="CMS Muon":
 
     for entry in xrange(InitialEvts):
         TreeReader.ReadEntry(entry)
-        INM=Nl(Branches["Muon"])
+        INM=Np(Branches["Muon"])
         if INM < 2: continue
         NE=0
         for i in xrange(INM):

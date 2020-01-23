@@ -25,12 +25,15 @@ def GlobalAnalysisParser():
     parser.add_argument('--XS', help='Sample cross section')
     parser.add_argument('--LUMI', help='Luminosity [pb-1]')
     parser.add_argument('--MLL', help='Minimum mll')
+    parser.add_argument('--MET', help='Minimum met')
     parser.add_argument('--OUT', help='ROOT output file')
     parser.add_argument('--ANA', help='Analysis selector')
     parser.add_argument('--DELPHES', help='Delphes libraries location')
     return parser.parse_args()
 
 args = GlobalAnalysisParser()
+
+###########Exceptions need to be implemented requiring the parsing of mandatory arguments
 
 #Delphes Initialization
 
@@ -103,7 +106,7 @@ MuonMass = 0.10566
 
 ElectronMass = 0.000511
 
-def Nl(ABranch): return ABranch.GetEntries()
+def Np(ABranch): return ABranch.GetEntries()
 
 def PT(ABranch,index): return ABranch.At(index).PT
 
@@ -115,6 +118,20 @@ def GetParticle(ABranch,index,mass):
     Particle = ROOT.TLorentzVector(0,0,0,0)
     Particle.SetPtEtaPhiM(PT(ABranch,index),ETA(ABranch,index),PHI(ABranch,index),mass)
     return Particle
+
+def Veto(ABranch,PTCut=0,ETACut=5,ETAgap=[5.0,-5.0]):
+    IN=Np(ABranch)
+    Nparticles=0
+    NoParticlesInTheEvent = False
+    if IN > 0:
+        for i in xrange(IN):
+            if PT(ABranch,i)>PTCut and abs(ETA(ABranch,i))<ETACut:
+                if abs(ETA(ABranch,i))<ETAgap[0] or abs(ETA(ABranch,i))>ETAgap[1]:
+                    Nparticles+=1
+    if Nparticles == 0:
+        NoParticlesInTheEvent = True
+    return NoParticlesInTheEvent
+
 
 #Information Functions
 
