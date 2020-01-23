@@ -116,3 +116,20 @@ def GetParticle(ABranch,index,mass):
     Particle.SetPtEtaPhiM(PT(ABranch,index),ETA(ABranch,index),PHI(ABranch,index),mass)
     return Particle
 
+#Information Functions
+
+def DisplayFinalInfo(Evtsi, Evtsf, Histo=None, MyFile=None):
+    E, DeltaE, W = LumiWeighter(Evtsi, Evtsf)
+    
+    print "Raw number of events before full selection:", Evtsi
+    print "Raw number of events that passed full selection:", Evtsf, "+-", sqrt(Evtsf)
+    print "Used cross section", args.XS, "pb"
+    print "Weighted number of events that passed full selection:", E, "+-", DeltaE
+
+    if Histo is None: return
+
+    WeightHisto(W,Histo)
+
+    if args.OUT is not None and MyFile is not None:
+        Histo.Write()
+        MyFile.Close()
