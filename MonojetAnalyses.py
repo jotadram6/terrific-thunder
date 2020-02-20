@@ -35,25 +35,10 @@ if args.ANA=="CMS Monojet":
         if NTau != 0: continue
 
         #Electron veto
-        #if not Veto(Branches["Electron"],PTCut=10,ETACut=2.5,ETAgap=[1.44,1.57]): continue
-        INE=Np(Branches["Electron"])
-        #if INE > 0: continue
-        NE=0
-        for i in xrange(INE):
-            if PT(Branches["Electron"],i)>10 and abs(ETA(Branches["Electron"],i))<2.5:
-                if abs(ETA(Branches["Electron"],i))<1.44 or abs(ETA(Branches["Electron"],i))>1.57:
-                    NE+=1
-
-        if NE != 0: continue
+        if not Veto(Branches["Electron"],PTCut=10,ETACut=2.5,ETAgap=[1.44,1.57]): continue
 
         #Muon veto
-        INM=Np(Branches["Muon"])
-        #if INM > 0: continue
-        NE=0
-        for i in xrange(INM):
-            if PT(Branches["Muon"],i)>10 and abs(ETA(Branches["Muon"],i))<2.4:
-                NE+=1
-        if NE != 0: continue
+        if not Veto(Branches["Muon"],PTCut=10,ETACut=2.4): continue
 
         if Branches["MissingET"].At(0).MET>float(args.MET):
         CountingEvents=CountingEvents+1

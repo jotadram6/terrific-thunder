@@ -17,6 +17,15 @@ def DeltaPhi(phi1,phi2):
 def MT(Lpt,MET,Lphi,METphi):
     return sqrt(2*Lpt*MET*(1-cos(DeltaPhi(METphi,Lphi))))
 
+def TotalTransMass(PT1M,PT2M,METM,PT1x,PT1y,PT2x,PT2y,METx,METy):
+    PT1Vec=ROOT.TVector3(PT1x,PT1y,0)
+    PT2Vec=ROOT.TVector3(PT2x,PT2y,0)
+    METVec=ROOT.TVector3(METx,METy,0)
+    FirstTerm2=(PT1M+PT2M+METM)**2
+    FullVec=PT1Vec+PT2Vec+METVec
+    SecondTerm2=FullVec.Mag2()
+    return sqrt(FirstTerm2-SecondTerm2)
+
 #Global parser
 
 def GlobalAnalysisParser():
@@ -114,6 +123,8 @@ def ETA(ABranch,index): return ABranch.At(index).Eta
 
 def PHI(ABranch,index): return ABranch.At(index).Phi
 
+def CH(ABranch,index): return ABranch.At(index).Charge
+
 def GetParticle(ABranch,index,mass):
     Particle = ROOT.TLorentzVector(0,0,0,0)
     Particle.SetPtEtaPhiM(PT(ABranch,index),ETA(ABranch,index),PHI(ABranch,index),mass)
@@ -132,6 +143,12 @@ def Veto(ABranch,PTCut=0,ETACut=5,ETAgap=[5.0,-5.0]):
         NoParticlesInTheEvent = True
     return NoParticlesInTheEvent
 
+def GetTaus(ABranch,PTcut=0):
+    Taus=[]
+    for i in xrange(ABranch.GetEntries()):
+        if ABranch.At(i).TauTag and PT(ABranch,i)>PTcut:
+            Taus.append(i)
+    return Taus
 
 #Information Functions
 

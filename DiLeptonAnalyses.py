@@ -7,7 +7,7 @@ if args.ANA=="ATLAS Electron":
 
     CountingEvents=0
     
-    InitialEvts, TreeReader, Branches = DelphesInit(JetBranch="", MetBranch="", MuonBranch="", ElectronBranch="Electron")
+    InitialEvts, TreeReader, Branches = DelphesInit(JetBranch="", MetBranch="MissingET", MuonBranch="", ElectronBranch="Electron")
 
     RootFile = BasketFile()
 
@@ -75,9 +75,43 @@ if args.ANA=="ATLAS Muon":
 
 if args.ANA=="ATLAS Tau":
 
-    print "Not implemented yet"
+    #Selection from 1709.07242
+    #Electron selection: pT(tau)> 65 GeV with Ntau>=2, opposite charges for the two leading taus, |DeltaPhi(tau1,tau2)|>2.7
+
+    CountingEvents=0
+    
+    InitialEvts, TreeReader, Branches = DelphesInit(JetBranch="Jet", MetBranch="", MuonBranch="", ElectronBranch="")
+
+    RootFile = BasketFile()
+
+    BinArray=[150,170,180,190,200,210,220,240,260,300,350,400,450,500,600,700,800,1000]
+    MLLhisto = ROOT.TH1F("MLL","MLL",len(BinArray)-1,array('d',BinArray))
+
+    for entry in xrange(InitialEvts):
+        TreeReader.ReadEntry(entry)
+        TausList=GetTaus(Branches["Jet"],PTcut=65)
+        if len(TausList)<2: continue
+        if CH(Branches["Jet"],TausList[0])*CH(Branches["Jet"],TausList[1])>=0: continue
+        if abs(DeltaPhi(PHI(Branches["Jet"],TausList[0]),PHI(Branches["Jet"],TausList[1])))<2.7: continue
+        PT1M=PT(Branches["Jet"],TausList[0])
+        PT1phi=PHIBranches["Jet"],TausList[0])
+        PT2M=PT(Branches["Jet"],TausList[1])
+        PT2phi=PHIBranches["Jet"],TausList[1])
+        METM=Branches["MissingET"].At(0).MET
+        METphi=PHI(Branches["MissingET"],0)
+        EventMLL=TotalTransMass(PT1M,PT2M,METM,
+                                PT1M*cos(PT1phi),PT1M*sin(PT1phi),
+                                PT2M*cos(PT2phi),PT2M*sin(PT2phi),
+                                METM*cos(METphi),METM*sin(METphi))
+        if EventMLL<150: continue
+        elif EventMLL>float(args.MLL):
+            CountingEvents=CountingEvents+1
+            MLLhisto.Fill(EventMLL)
 
 
+    DisplayFinalInfo(InitialEvts, CountingEvents, Histo=MLLhisto, MyFile=RootFile)        
+
+    
 if args.ANA=="CMS Electron":
 
     #Selection from PAS-EXO-09-019
