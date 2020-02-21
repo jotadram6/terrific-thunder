@@ -80,7 +80,7 @@ if args.ANA=="ATLAS Tau":
 
     CountingEvents=0
     
-    InitialEvts, TreeReader, Branches = DelphesInit(JetBranch="Jet", MetBranch="", MuonBranch="", ElectronBranch="")
+    InitialEvts, TreeReader, Branches = DelphesInit(JetBranch="Jet", MetBranch="MissingET", MuonBranch="", ElectronBranch="")
 
     RootFile = BasketFile()
 
@@ -91,14 +91,18 @@ if args.ANA=="ATLAS Tau":
         TreeReader.ReadEntry(entry)
         TausList=GetTaus(Branches["Jet"],PTcut=65)
         if len(TausList)<2: continue
+        if abs(ETA(Branches["Jet"],TausList[0]))>2.5: continue
+        if abs(ETA(Branches["Jet"],TausList[1]))>2.5: continue
+        if abs(ETA(Branches["Jet"],TausList[0]))>1.37 and abs(ETA(Branches["Jet"],TausList[0]))<1.52: continue
+        if abs(ETA(Branches["Jet"],TausList[1]))>1.37 and abs(ETA(Branches["Jet"],TausList[1]))<1.52: continue
         if CH(Branches["Jet"],TausList[0])*CH(Branches["Jet"],TausList[1])>=0: continue
         if abs(DeltaPhi(PHI(Branches["Jet"],TausList[0]),PHI(Branches["Jet"],TausList[1])))<2.7: continue
         PT1M=PT(Branches["Jet"],TausList[0])
-        PT1phi=PHIBranches["Jet"],TausList[0])
+        PT1phi=PHI(Branches["Jet"],TausList[0])
         PT2M=PT(Branches["Jet"],TausList[1])
-        PT2phi=PHIBranches["Jet"],TausList[1])
-        METM=Branches["MissingET"].At(0).MET
-        METphi=PHI(Branches["MissingET"],0)
+        PT2phi=PHI(Branches["Jet"],TausList[1])
+        METM=Branches["Met"].At(0).MET
+        METphi=PHI(Branches["Met"],0)
         EventMLL=TotalTransMass(PT1M,PT2M,METM,
                                 PT1M*cos(PT1phi),PT1M*sin(PT1phi),
                                 PT2M*cos(PT2phi),PT2M*sin(PT2phi),

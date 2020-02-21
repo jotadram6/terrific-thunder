@@ -23,7 +23,8 @@ def MT(Lpt,MET,Lphi,METphi):
     return sqrt(2*Lpt*MET*(1-cos(DeltaPhi(METphi,Lphi))))
 
 #Delphes_Path="/home/joser/Pheno_Studies/MG5_aMC_v2_6_1/Delphes/"
-Delphes_Path="/home/joser/Dropbox/Vandy/EFT/ElectronNeutrino/Delphes-3.4.1/"
+#Delphes_Path="/home/joser/Dropbox/Vandy/EFT/ElectronNeutrino/Delphes-3.4.1/"
+Delphes_Path="/cms/Jose/EFT_MG_PRL_version/MG5_aMC_v2_6_1/Delphes/"
 ROOT.gSystem.AddDynamicPath(Delphes_Path)
 #ROOT.gROOT.ProcessLine("#include <math.h>")
 ROOT.gSystem.Load("libDelphes");

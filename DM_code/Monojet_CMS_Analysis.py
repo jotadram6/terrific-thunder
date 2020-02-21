@@ -70,9 +70,9 @@ Val1Counter=0
 #Selection: MET>200 GeV, pT(j1)> 100 GeV, |eta(j1)|<2.5, HT>110 GeV, No lep with pT>10 or tau with pT>18, |eta(e)|<2.5, |eta(mu)|<2.4, No b-tagged jets with pT > 15 with Medium WP, |DeltaPhi(j1-4,MET)|>0.5
 if args.OUT is not None:
     RootFile = ROOT.TFile(args.OUT,"recreate")
-    #BinArray=[130,138.93,148.473,158.672,169.572,181.22,193.668,206.972,221.189,236.383,252.621,269.974,288.519,308.338,329.518,352.154,376.344,402.195,429.823,459.349,490.902,524.623,560.661,599.174,640.332,684.318,731.325,781.561,835.248,892.623,953.939,1019.47,1089.5,1164.34,1244.32,1329.79,1421.14,1518.76,1623.09,1734.58,1853.73,1981.07,2117.15,2262.58,2418,2584.1,2761.61,2951.31,3154.04,3370.7,3602.24,3849.68,4114.12,4396.73,4698.75,5021.52,5366.46,5735.09,6129.05,6550.06,7000.]
-    #METhisto = ROOT.TH1F("MET","MET",len(BinArray)-1,array('d',BinArray))
-    METhisto = ROOT.TH1F("MET","MET",20,200,2000)
+    BinArray=[200,230,260,290,320,350,390,430,470,510,550,590,640,690,740,790,840,900,960,1020,1090,1160]              
+    METhisto = ROOT.TH1F("MET","MET",len(BinArray)-1,array('d',BinArray))
+    #METhisto = ROOT.TH1F("MET","MET",32,200,1160)
 
 for entry in xrange(NumberOfEventsToCheck):
     treeReader.ReadEntry(entry)

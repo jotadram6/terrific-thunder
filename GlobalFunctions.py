@@ -18,12 +18,12 @@ def MT(Lpt,MET,Lphi,METphi):
     return sqrt(2*Lpt*MET*(1-cos(DeltaPhi(METphi,Lphi))))
 
 def TotalTransMass(PT1M,PT2M,METM,PT1x,PT1y,PT2x,PT2y,METx,METy):
-    PT1Vec=ROOT.TVector3(PT1x,PT1y,0)
-    PT2Vec=ROOT.TVector3(PT2x,PT2y,0)
-    METVec=ROOT.TVector3(METx,METy,0)
+    PT1Vec=ROOT.TVector2(PT1x,PT1y)#PT1Vec=ROOT.TVector3(PT1x,PT1y,0)
+    PT2Vec=ROOT.TVector2(PT2x,PT2y)#PT2Vec=ROOT.TVector3(PT2x,PT2y,0)
+    METVec=ROOT.TVector2(METx,METy)#METVec=ROOT.TVector3(METx,METy,0)
     FirstTerm2=(PT1M+PT2M+METM)**2
     FullVec=PT1Vec+PT2Vec+METVec
-    SecondTerm2=FullVec.Mag2()
+    SecondTerm2=FullVec.Mod2()#SecondTerm2=FullVec.Mag2()
     return sqrt(FirstTerm2-SecondTerm2)
 
 #Global parser
