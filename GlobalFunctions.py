@@ -123,7 +123,14 @@ def ETA(ABranch,index): return ABranch.At(index).Eta
 
 def PHI(ABranch,index): return ABranch.At(index).Phi
 
+def M(ABranch,index): return ABranch.At(index).Mass
+
 def CH(ABranch,index): return ABranch.At(index).Charge
+
+def DeltaR(ABranch1,index1,ABranch2,index2):
+    deta2=(ETA(ABranch1,index1)-ETA(ABranch2,index2))**2
+    dphi2=DeltaPhi(PHI(ABranch1,index1),PHI(ABranch2,index2))**2
+    return sqrt(deta2+dphi2)
 
 def GetParticle(ABranch,index,mass):
     Particle = ROOT.TLorentzVector(0,0,0,0)
