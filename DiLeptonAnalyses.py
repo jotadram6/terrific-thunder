@@ -193,3 +193,37 @@ if args.ANA=="CMS Tau":
 
     print "Not implemented yet"
 
+if args.ANA=="CMS Muon AFB":
+
+    #Selection from 
+    #Muon selesction: pt(mu)>53, |eta(mu)|<2.4, Mmumu>150
+
+    CountingEvents=0
+    
+    InitialEvts, TreeReader, Branches = DelphesInit(JetBranch="", MetBranch="", MuonBranch="Muon", ElectronBranch="")
+
+    RootFile = BasketFile()
+
+    BinArray=[600,900,1410,1530,1660,1790,1940,2100,2280,2480,2680,2900,3150,4000]
+    MLLhisto = ROOT.TH1F("Mll","Mll",len(BinArray)-1,array('d',BinArray))
+
+    for entry in xrange(InitialEvts):
+        TreeReader.ReadEntry(entry)
+        INM=Np(Branches["Muon"])
+        if INM < 2: continue
+        NE=0
+        for i in xrange(INM):
+            if PT(Branches["Muon"],i)>20 and abs(ETA(Branches["Muon"],i))<2.4:
+                NE+=1
+        if NE != 2: continue
+        Muon1 = GetParticle(Branches["Muon"],0,MuonMass)
+        Muon2 = GetParticle(Branches["Muon"],1,MuonMass)
+        DiMuon = Muon1 + Muon2
+        EventMLL=DiMuon.M()
+        if EventMLL<150: continue
+        elif EventMLL>float(args.MLL):
+            CountingEvents=CountingEvents+1
+            MLLhisto.Fill(EventMLL)
+
+
+    DisplayFinalInfo(InitialEvts, CountingEvents, Histo=MLLhisto, MyFile=RootFile)

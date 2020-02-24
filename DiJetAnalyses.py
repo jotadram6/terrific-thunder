@@ -8,7 +8,7 @@ if args.ANA=="CMS Dijet":
     InitialEvts, TreeReader, Branches = DelphesInit(JetBranch="Jet", MetBranch="", MuonBranch="", ElectronBranch="")
 
     RootFile = BasketFile()
-    DijetHisto = ROOT.TH1F("mjj","mjj",20,200,2000)
+    DijetHisto = ROOT.TH1F("mjj","mjj",27,1250,8000)
 
     for entry in xrange(InitialEvts):
         TreeReader.ReadEntry(entry)
@@ -50,6 +50,6 @@ if args.ANA=="CMS Dijet":
         dijet=FJet1+FJet2
         
         CountingEvents=CountingEvents+1
-        DijetHisto.Fill(diijet.M())
+        DijetHisto.Fill(dijet.M())
 
     DisplayFinalInfo(InitialEvts, CountingEvents, Histo=DijetHisto, MyFile=RootFile)
