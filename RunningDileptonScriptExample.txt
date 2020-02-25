@@ -5,3 +5,5 @@ python DiLeptonAnalyses.py --DIR /home/jose/Pheno_studies/MG5_aMC_v2_6_4/DYToLL/
 python DiLeptonAnalyses.py --DIR /home/jose/Pheno_studies/MG5_aMC_v2_6_4/DYToLL/Events/run_01/ --ANA "ATLAS Muon" --XS 0.1226 --MLL 500 --DELPHES /home/jose/Pheno_studies/MG5_aMC_v2_6_4/Delphes/ --OUT EFT_MuMu0J_Validation_ATLASv3.root --LUMI 139000 > EFT_MuMU0J_Validation_ATLASv3.txt
 
 python DiLeptonAnalyses.py --DIR /home/jose/Pheno_studies/MG5_aMC_v2_6_4/DYToLL/Events/run_01/ --ANA "ATLAS Electron" --XS 0.1226 --MLL 500 --DELPHES /home/jose/Pheno_studies/MG5_aMC_v2_6_4/Delphes/ --OUT EFT_EE0J_Validation_ATLASv3.root --LUMI 139000 > EFT_EE0J_Validation_ATLASv3.txt
+
+python DiLeptonAnalyses.py --DIR /cms/Jose/EFT_MG_PRL_version/MG5_aMC_v2_6_1/DiTauSM/Samples/ --ANA "ATLAS Tau" --XS 8.187614 --MLL 150 --DELPHES /cms/Jose/EFT_MG_PRL_version/MG5_aMC_v2_6_1/Delphes/ --LUMI 36100 --OUT SM_Validation_DiTau_ATLASv3.root > SM_Validation_DiTau_ATLASv3.txt

@@ -80,17 +80,21 @@ if args.ANA=="ATLAS Tau":
 
     CountingEvents=0
     
-    InitialEvts, TreeReader, Branches = DelphesInit(JetBranch="Jet", MetBranch="MissingET", MuonBranch="", ElectronBranch="")
+    InitialEvts, TreeReader, Branches = DelphesInit(JetBranch="Jet", MetBranch="MissingET", MuonBranch="Muon", ElectronBranch="Electron")
 
     RootFile = BasketFile()
 
     BinArray=[150,170,180,190,200,210,220,240,260,300,350,400,450,500,600,700,800,1000]
     MLLhisto = ROOT.TH1F("MLL","MLL",len(BinArray)-1,array('d',BinArray))
+    #MToThisto = ROOT.TH1F("MToT","MToT",len(BinArray)-1,array('d',BinArray))
 
     for entry in xrange(InitialEvts):
         TreeReader.ReadEntry(entry)
         TausList=GetTaus(Branches["Jet"],PTcut=65)
+        #if not Veto(Branches["Electron"],PTCut=15,ETACut=2.47,ETAgap=[1.37,1.52]): continue
+        #if not Veto(Branches["Muon"],PTCut=7,ETACut=2.5): continue
         if len(TausList)<2: continue
+        if PT(Branches["Jet"],TausList[0])<130: continue
         if abs(ETA(Branches["Jet"],TausList[0]))>2.5: continue
         if abs(ETA(Branches["Jet"],TausList[1]))>2.5: continue
         if abs(ETA(Branches["Jet"],TausList[0]))>1.37 and abs(ETA(Branches["Jet"],TausList[0]))<1.52: continue
@@ -107,14 +111,21 @@ if args.ANA=="ATLAS Tau":
                                 PT1M*cos(PT1phi),PT1M*sin(PT1phi),
                                 PT2M*cos(PT2phi),PT2M*sin(PT2phi),
                                 METM*cos(METphi),METM*sin(METphi))
+        #Mu1LV=ROOT.TLorentzVector()
+        #Mu2LV=ROOT.TLorentzVector()
+        #METLV=ROOT.TLorentzVector()
+        #Mu1LV.SetPtEtaPhiM(PT(Branches["Jet"],TausList[0]),ETA(Branches["Jet"],TausList[0]),PHI(Branches["Jet"],TausList[0]),MuonMass)
+        #Mu2LV.SetPtEtaPhiM(PT(Branches["Jet"],TausList[1]),ETA(Branches["Jet"],TausList[1]),PHI(Branches["Jet"],TausList[1]),MuonMass)
+        #METLV.SetPxPyPzE(METM*cos(METphi),METM*sin(METphi),0.0,METM)
+        #FullMTVector=Mu1LV+Mu2LV+METLV
         if EventMLL<150: continue
         elif EventMLL>float(args.MLL):
             CountingEvents=CountingEvents+1
             MLLhisto.Fill(EventMLL)
-
+            #MToThisto.Fill(FullMTVector.M())
 
     DisplayFinalInfo(InitialEvts, CountingEvents, Histo=MLLhisto, MyFile=RootFile)        
-
+    #DisplayFinalInfo(InitialEvts, CountingEvents, Histo=MToThisto, MyFile=RootFile)
     
 if args.ANA=="CMS Electron":
 

@@ -1,0 +1,1 @@
+python DiJetAnalyses.py --DIR /cms/Jose/EFT_MG_PRL_version/MG5_aMC_v2_6_1/Zdijet/Events/run_02/ --ANA "CMS Dijet" --XS 4e-05 --DELPHES /cms/Jose/EFT_MG_PRL_version/MG5_aMC_v2_6_1/Delphes/ --LUMI 36000 --OUT Dijet_SM_Validation_CMS_v1.root > Dijet_SM_Validation_CMS_v1.txt
