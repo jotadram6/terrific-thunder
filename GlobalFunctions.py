@@ -174,8 +174,20 @@ def DisplayFinalInfo(Evtsi, Evtsf, Histo=None, MyFile=None):
 
     if Histo is None: return
 
-    WeightHisto(W,Histo)
+    if type(Histo) is not list:
+        WeightHisto(W,Histo)
 
-    if args.OUT is not None and MyFile is not None:
-        Histo.Write()
-        MyFile.Close()
+        if args.OUT is not None and MyFile is not None:
+            Histo.Write()
+            MyFile.Close()
+
+    if type(Histo) is list:
+        for i in xrange(len(Histo)):
+            WeightHisto(W,Histo[i])
+
+            if args.OUT is not None and MyFile is not None:
+                Histo[i].Write()
+                
+        if args.OUT is not None and MyFile is not None:
+            MyFile.Close()
+            

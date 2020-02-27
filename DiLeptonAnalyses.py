@@ -214,15 +214,17 @@ if args.ANA=="CMS Muon AFB":
     #Selection from 
     #Muon selesction: pt(mu)>53, |eta(mu)|<2.4, Mmumu>150
 
-    CountingEvents=0
+    CountingMuEvents=0
+    CountingElEvents=0
     
-    InitialEvts, TreeReader, Branches = DelphesInit(JetBranch="", MetBranch="", MuonBranch="Muon", ElectronBranch="")
+    InitialEvts, TreeReader, Branches = DelphesInit(JetBranch="", MetBranch="", MuonBranch="Muon", ElectronBranch="Electron")
 
     RootFile = BasketFile()
 
     YBinArray=[0.0,1.0,1.25,1.5,2.4,5.0]
     FBBinArray=[-1.0,0.0,1.0]
-    AFBhisto = ROOT.TH2F("AFB","AFB",len(YBinArray)-1,array('d',YBinArray),len(FBBinArray)-1,array('d',FBBinArray))
+    MuAFBhisto = ROOT.TH2F("MuAFB","MuAFB",len(YBinArray)-1,array('d',YBinArray),len(FBBinArray)-1,array('d',FBBinArray))
+    ElAFBhisto = ROOT.TH2F("ElAFB","ElAFB",len(YBinArray)-1,array('d',YBinArray),len(FBBinArray)-1,array('d',FBBinArray))
     Mllpeakmin=86
     Mllpeakmax=96
 
@@ -260,15 +262,61 @@ if args.ANA=="CMS Muon AFB":
         CosTheta=cos(CosThetaNumerator/CosThetaDenominator)
         TransformedCosTheta=(abs(DiMuon.Pz())/DiMuon.Pz())*CosTheta
         DiMuonRapidity=0.5*log((DiMuon.Energy()+DiMuon.Pz())/(DiMuon.Energy()-DiMuon.Pz()))
-        print CosTheta, TransformedCosTheta, DiMuonRapidity
+        #print CosTheta, TransformedCosTheta, DiMuonRapidity
         #Forwadr=+1, Backward=-1
         if TransformedCosTheta>0:
-            AFBhisto.Fill(abs(DiMuonRapidity),0.5)
+            MuAFBhisto.Fill(abs(DiMuonRapidity),0.5)
         else:
-            AFBhisto.Fill(abs(DiMuonRapidity),-0.5)
-        CountingEvents=CountingEvents+1
+            MuAFBhisto.Fill(abs(DiMuonRapidity),-0.5)
+        CountingMuEvents=CountingMuEvents+1
 
-    DisplayFinalInfo(InitialEvts, CountingEvents, Histo=AFBhisto, MyFile=RootFile)
+    for entry in xrange(InitialEvts):
+        TreeReader.ReadEntry(entry)
+        INM=Np(Branches["Electron"])
+        if INM < 2: continue
+        NE=0
+        for i in xrange(INM):
+            if PT(Branches["Electron"],i)>20 and abs(ETA(Branches["Electron"],i))<2.4:
+                NE+=1
+        if NE != 2: continue
+        Electron1Ch=CH(Branches["Electron"],0)
+        Electron2Ch=CH(Branches["Electron"],1)
+        if Electron1Ch*Electron2Ch>=0: continue
+        Electron1 = GetParticle(Branches["Electron"],0,ElectronMass)
+        Electron2 = GetParticle(Branches["Electron"],1,ElectronMass)
+        DiElectron = Electron1 + Electron2
+        EventMLL=DiElectron.M()
+        if EventMLL<86 or EventMLL>96: continue
+        Q2=DiElectron.Mag2()
+        QT2=DiElectron.Pt()**2
+        if Electron1Ch<0:
+            P1m=(Electron1.Energy()-Electron1.Pz())/sqrt(2)
+            P1p=(Electron1.Energy()+Electron1.Pz())/sqrt(2)
+            P2m=(Electron2.Energy()-Electron2.Pz())/sqrt(2)
+            P2p=(Electron2.Energy()+Electron2.Pz())/sqrt(2)
+        else:
+            P1m=(Electron2.Energy()-Electron2.Pz())/sqrt(2)
+            P1p=(Electron2.Energy()+Electron2.Pz())/sqrt(2)
+            P2m=(Electron1.Energy()-Electron1.Pz())/sqrt(2)
+            P2p=(Electron1.Energy()+Electron1.Pz())/sqrt(2)
+        CosThetaNumerator=2*((P1p*P2m)-(P1m*P2p))
+        CosThetaDenominator=sqrt(Q2*(Q2+QT2))
+        CosTheta=cos(CosThetaNumerator/CosThetaDenominator)
+        TransformedCosTheta=(abs(DiElectron.Pz())/DiElectron.Pz())*CosTheta
+        DiElectronRapidity=0.5*log((DiElectron.Energy()+DiElectron.Pz())/(DiElectron.Energy()-DiElectron.Pz()))
+        #print CosTheta, TransformedCosTheta, DiElectronRapidity
+        #Forwadr=+1, Backward=-1
+        if TransformedCosTheta>0:
+            ElAFBhisto.Fill(abs(DiElectronRapidity),0.5)
+        else:
+            ElAFBhisto.Fill(abs(DiElectronRapidity),-0.5)
+        CountingElEvents=CountingElEvents+1
+
+    TotalHisto=MuAFBhisto.Clone("TotalHisto")
+    TotalHisto.Sumw2()
+    TotalHisto.Add(ElAFBhisto)
+        
+    DisplayFinalInfo(InitialEvts, CountingMuEvents, Histo=[MuAFBhisto,ElAFBhisto,TotalHisto], MyFile=RootFile)
     FlagAnalysisDone=True
 
 #NO ANALYSIS APPLIED
