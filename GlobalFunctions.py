@@ -105,6 +105,11 @@ def LumiWeighter(TotalEvts, Evts, Lumi=float(args.LUMI), xs=float(args.XS)):
 def WeightHisto(Weight,Histo):
     Histo.Sumw2()
     Histo.Scale(Weight)
+
+    HistoType = str(type(Histo))
+
+    if 'H2' in HistoType: return
+
     print "Bin range,", "Value"
     for i in xrange(Histo.GetNbinsX()):
         print str(Histo.GetBinLowEdge(i+1))+"-"+str(Histo.GetBinLowEdge(i+1)+Histo.GetBinWidth(i+1))+",", Histo.GetBinContent(i+1)

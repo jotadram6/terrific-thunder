@@ -1,0 +1,6 @@
+Delphes classes imported
+-------------------------------------->  100000 events have been loaded and are ready for analysis!!!!!!!!!!!
+Raw number of events before full selection: 100000
+Raw number of events that passed full selection: 27123 +- 164.690619041
+Used cross section 1256 pb
+Weighted number of events that passed full selection: 6711098.136 +- 40749.7292505

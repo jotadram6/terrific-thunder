@@ -1,5 +1,7 @@
 from GlobalFunctions import *
 
+FlagAnalysisDone=False
+
 if args.ANA=="ATLAS Electron":
 
     #Selection from 1903.06248
@@ -36,7 +38,8 @@ if args.ANA=="ATLAS Electron":
 
 
     DisplayFinalInfo(InitialEvts, CountingEvents, Histo=MLLhisto, MyFile=RootFile)
-
+    FlagAnalysisDone=True
+    
 if args.ANA=="ATLAS Muon":
 
     #Selection from 1903.06248
@@ -71,7 +74,7 @@ if args.ANA=="ATLAS Muon":
 
 
     DisplayFinalInfo(InitialEvts, CountingEvents, Histo=MLLhisto, MyFile=RootFile)
-
+    FlagAnalysisDone=True
 
 if args.ANA=="ATLAS Tau":
 
@@ -126,6 +129,7 @@ if args.ANA=="ATLAS Tau":
 
     DisplayFinalInfo(InitialEvts, CountingEvents, Histo=MLLhisto, MyFile=RootFile)        
     #DisplayFinalInfo(InitialEvts, CountingEvents, Histo=MToThisto, MyFile=RootFile)
+    FlagAnalysisDone=True
     
 if args.ANA=="CMS Electron":
 
@@ -162,7 +166,7 @@ if args.ANA=="CMS Electron":
 
 
     DisplayFinalInfo(InitialEvts, CountingEvents, Histo=MLLhisto, MyFile=RootFile)
-
+    FlagAnalysisDone=True
 
 if args.ANA=="CMS Muon":
 
@@ -198,12 +202,13 @@ if args.ANA=="CMS Muon":
 
 
     DisplayFinalInfo(InitialEvts, CountingEvents, Histo=MLLhisto, MyFile=RootFile)
-
+    FlagAnalysisDone=True
 
 if args.ANA=="CMS Tau":
 
     print "Not implemented yet"
-
+    FlagAnalysisDone=True
+    
 if args.ANA=="CMS Muon AFB":
 
     #Selection from 
@@ -215,8 +220,11 @@ if args.ANA=="CMS Muon AFB":
 
     RootFile = BasketFile()
 
-    BinArray=[600,900,1410,1530,1660,1790,1940,2100,2280,2480,2680,2900,3150,4000]
-    MLLhisto = ROOT.TH1F("Mll","Mll",len(BinArray)-1,array('d',BinArray))
+    YBinArray=[0.0,1.0,1.25,1.5,2.4,5.0]
+    FBBinArray=[-1.0,0.0,1.0]
+    AFBhisto = ROOT.TH2F("AFB","AFB",len(YBinArray)-1,array('d',YBinArray),len(FBBinArray)-1,array('d',FBBinArray))
+    Mllpeakmin=86
+    Mllpeakmax=96
 
     for entry in xrange(InitialEvts):
         TreeReader.ReadEntry(entry)
@@ -227,14 +235,41 @@ if args.ANA=="CMS Muon AFB":
             if PT(Branches["Muon"],i)>20 and abs(ETA(Branches["Muon"],i))<2.4:
                 NE+=1
         if NE != 2: continue
+        Muon1Ch=CH(Branches["Muon"],0)
+        Muon2Ch=CH(Branches["Muon"],1)
+        if Muon1Ch*Muon2Ch>=0: continue
         Muon1 = GetParticle(Branches["Muon"],0,MuonMass)
         Muon2 = GetParticle(Branches["Muon"],1,MuonMass)
         DiMuon = Muon1 + Muon2
         EventMLL=DiMuon.M()
-        if EventMLL<150: continue
-        elif EventMLL>float(args.MLL):
-            CountingEvents=CountingEvents+1
-            MLLhisto.Fill(EventMLL)
+        if EventMLL<86 or EventMLL>96: continue
+        Q2=DiMuon.Mag2()
+        QT2=DiMuon.Pt()**2
+        if Muon1Ch<0:
+            P1m=(Muon1.Energy()-Muon1.Pz())/sqrt(2)
+            P1p=(Muon1.Energy()+Muon1.Pz())/sqrt(2)
+            P2m=(Muon2.Energy()-Muon2.Pz())/sqrt(2)
+            P2p=(Muon2.Energy()+Muon2.Pz())/sqrt(2)
+        else:
+            P1m=(Muon2.Energy()-Muon2.Pz())/sqrt(2)
+            P1p=(Muon2.Energy()+Muon2.Pz())/sqrt(2)
+            P2m=(Muon1.Energy()-Muon1.Pz())/sqrt(2)
+            P2p=(Muon1.Energy()+Muon1.Pz())/sqrt(2)
+        CosThetaNumerator=2*((P1p*P2m)-(P1m*P2p))
+        CosThetaDenominator=sqrt(Q2*(Q2+QT2))
+        CosTheta=cos(CosThetaNumerator/CosThetaDenominator)
+        TransformedCosTheta=(abs(DiMuon.Pz())/DiMuon.Pz())*CosTheta
+        DiMuonRapidity=0.5*log((DiMuon.Energy()+DiMuon.Pz())/(DiMuon.Energy()-DiMuon.Pz()))
+        print CosTheta, TransformedCosTheta, DiMuonRapidity
+        #Forwadr=+1, Backward=-1
+        if TransformedCosTheta>0:
+            AFBhisto.Fill(abs(DiMuonRapidity),0.5)
+        else:
+            AFBhisto.Fill(abs(DiMuonRapidity),-0.5)
+        CountingEvents=CountingEvents+1
 
+    DisplayFinalInfo(InitialEvts, CountingEvents, Histo=AFBhisto, MyFile=RootFile)
+    FlagAnalysisDone=True
 
-    DisplayFinalInfo(InitialEvts, CountingEvents, Histo=MLLhisto, MyFile=RootFile)
+#NO ANALYSIS APPLIED
+if not FlagAnalysisDone: print "No analysis applied!"

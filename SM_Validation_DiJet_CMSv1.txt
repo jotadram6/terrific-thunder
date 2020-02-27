@@ -1,2 +1,0 @@
-Delphes classes imported
--------------------------------------->  50000 events have been loaded and are ready for analysis!!!!!!!!!!!
