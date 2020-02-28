@@ -1,0 +1,1 @@
+python MonojetAnalyses.py --DIR /cms/Jose/EFT_MG_PRL_version/MG5_aMC_v2_6_1/LO_MonoJet_DMsimp_s_spin1/Events/run_03/ --ANA "CMS Monojet" --XS 1.65e-07 --MET 200 --DELPHES /cms/Jose/EFT_MG_PRL_version/MG5_aMC_v2_6_1/Delphes/ --LUMI 12900 --OUT Monojet_BM2_CMS_v1.root > Monojet_BM2_CMS_v1.txt
